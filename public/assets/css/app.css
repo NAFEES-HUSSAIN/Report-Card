@@ -1,0 +1,32 @@
+/*
+ | GradeSphere theme source (mirror of resources/css/app.css component layer).
+ | Vite builds from resources/css/app.css — keep theme tokens in sync.
+ */
+
+:root {
+    --gs-primary: #6d28d9;
+    --gs-primary-soft: #ede9fe;
+    --gs-accent: #f59e0b;
+    --gs-accent-soft: #fffbeb;
+    --gs-surface: #f6f4fb;
+    --gs-surface-elevated: #ffffff;
+    --gs-ink: #1a1228;
+    --gs-muted: #6b6280;
+    --gs-line: #e4dff0;
+    --gs-gradient-from: #6d28d9;
+    --gs-gradient-to: #f59e0b;
+}
+
+.dark {
+    --gs-primary: #a78bfa;
+    --gs-primary-soft: #2a1f45;
+    --gs-accent: #fbbf24;
+    --gs-accent-soft: #3a2a12;
+    --gs-surface: #0f0f14;
+    --gs-surface-elevated: #17171f;
+    --gs-ink: #f3effa;
+    --gs-muted: #a59bb8;
+    --gs-line: #2a2836;
+    --gs-gradient-from: #4c1d95;
+    --gs-gradient-to: #b45309;
+}

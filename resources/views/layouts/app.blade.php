@@ -16,7 +16,10 @@
 </head>
 <body class="min-h-full bg-[var(--gs-surface)] text-[var(--gs-ink)]">
     @php
-        $shellRole = $shellRole ?? (auth()->check() ? (auth()->user()->role ?? 'teacher') : (session()->has('student_id') ? 'student' : 'teacher'));
+        $shellRole = $shellRole
+            ?? (auth()->check()
+                ? (auth()->user()->role?->value ?? 'teacher')
+                : (session()->has('student_id') ? 'student' : 'teacher'));
         $userName = auth()->user()->name ?? session('student_name') ?? 'Guest';
         $userInitial = strtoupper(substr($userName, 0, 1));
     @endphp
@@ -56,12 +59,21 @@
                         <span class="text-sm font-semibold text-[var(--gs-ink)]">{{ $userName }}</span>
                     </div>
 
-                    @if (Route::has('logout'))
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
-                            <button type="submit" class="btn-secondary !px-3 !py-2 text-xs sm:!px-4 sm:!py-2.5 sm:text-sm">Log out</button>
-                        </form>
-                    @endif
+                    @auth
+                        @if (Route::has('logout'))
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="btn-secondary !px-3 !py-2 text-xs sm:!px-4 sm:!py-2.5 sm:text-sm">Log out</button>
+                            </form>
+                        @endif
+                    @else
+                        @if (session()->has('student_id') && Route::has('student.logout'))
+                            <form method="POST" action="{{ route('student.logout') }}">
+                                @csrf
+                                <button type="submit" class="btn-secondary !px-3 !py-2 text-xs sm:!px-4 sm:!py-2.5 sm:text-sm">Sign out</button>
+                            </form>
+                        @endif
+                    @endauth
                 </div>
             </header>
 

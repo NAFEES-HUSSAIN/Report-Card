@@ -33,5 +33,16 @@
 - Transcript forces light print styles (`.print-force-light`)
 - CSS tokens in `:root` / `.dark` as `--gs-*` custom properties
 
-## Data contract (`$student`)
-`id`, `name`, `index_number`, `class_name`, `term`, `standing`, `rank`, `average`, `total_marks`, `days_present`, `days_absent`, `total_days`, `subjects[]` (`name`, `marks`, `remarks`)
+## Seeded local accounts (after `php artisan migrate:fresh --seed`)
+| Role | Email / Index | Password |
+|------|---------------|----------|
+| Admin | admin@gradesphere.test | password |
+| Teacher | teacher@gradesphere.test | password |
+| Teacher | teacher2@gradesphere.test | password |
+| Student | STU-2026-0142 (Amina Rahman) | none — index lookup |
+
+## Database (MySQL `:3308`, DB `report_card`)
+Normalized: `academic_years` → `terms` / `school_classes` → `enrollments` / `report_cards` → `subject_scores`; `subjects` + `class_subject`; `students` (soft deletes); `users.role` teacher|admin.
+
+## Data contract (`$student` presentation object)
+`id`, `name`, `index_number`, `class_name`, `term`, `standing`, `rank`, `average`, `total_marks`, `days_present`, `days_absent`, `total_days`, `subjects[]` (`subject_id`, `name`, `marks`, `remarks`), plus `report_card_id`, `school_class_id`, `term_id`, `student_id`

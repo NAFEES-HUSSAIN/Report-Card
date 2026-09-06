@@ -8,16 +8,23 @@
     $studentKey = data_get($student ?? null, 'id', $student ?? null);
     $action = $isEdit && Route::has('teacher.form.update')
         ? route('teacher.form.update', $studentKey)
-        : ($isEdit && Route::has('teacher.form.edit')
-            ? route('teacher.form.edit', $studentKey)
-            : (Route::has('teacher.form.store') ? route('teacher.form.store') : url()->current()));
-    $subjectRows = old('subjects', data_get($student ?? null, 'subjects', [
-        ['name' => '', 'marks' => '', 'remarks' => ''],
-        ['name' => '', 'marks' => '', 'remarks' => ''],
-        ['name' => '', 'marks' => '', 'remarks' => ''],
-    ]));
+        : (Route::has('teacher.form.store') ? route('teacher.form.store') : url()->current());
+
+    $subjectRows = old('subjects');
+    if ($subjectRows === null) {
+        $existing = collect(data_get($student ?? null, 'subjects', []));
+        if ($existing->isNotEmpty()) {
+            $subjectRows = $existing->map(fn ($row) => [
+                'subject_id' => data_get($row, 'subject_id'),
+                'marks' => data_get($row, 'marks'),
+                'remarks' => data_get($row, 'remarks'),
+            ])->all();
+        } else {
+            $subjectRows = [['subject_id' => '', 'marks' => '', 'remarks' => '']];
+        }
+    }
     if (empty($subjectRows)) {
-        $subjectRows = [['name' => '', 'marks' => '', 'remarks' => '']];
+        $subjectRows = [['subject_id' => '', 'marks' => '', 'remarks' => '']];
     }
 @endphp
 
@@ -49,12 +56,28 @@
             </div>
             <div>
                 <label for="class_name" class="input-label">Class</label>
-                <input type="text" name="class_name" id="class_name" value="{{ old('class_name', data_get($student ?? null, 'class_name', data_get($student ?? null, 'class'))) }}" class="input-field" required>
+                <input
+                    type="text"
+                    name="class_name"
+                    id="class_name"
+                    value="{{ old('class_name', $selectedClassName ?? data_get($student ?? null, 'class_name')) }}"
+                    class="input-field"
+                    placeholder="e.g. Form 3A"
+                    required
+                    autocomplete="off"
+                >
                 @error('class_name')<p class="field-error" role="alert">{{ $message }}</p>@enderror
             </div>
             <div>
-                <label for="term" class="input-label">Term / period</label>
-                <input type="text" name="term" id="term" value="{{ old('term', data_get($student ?? null, 'term')) }}" class="input-field" placeholder="e.g. Term 1 2026">
+                <label for="term" class="input-label">Term</label>
+                <select name="term" id="term" class="input-field" required>
+                    <option value="">Select term</option>
+                    @foreach ($termOptions ?? [] as $termName)
+                        <option value="{{ $termName }}" @selected((string) old('term', $selectedTerm ?? '') === (string) $termName)>
+                            {{ $termName }}
+                        </option>
+                    @endforeach
+                </select>
                 @error('term')<p class="field-error" role="alert">{{ $message }}</p>@enderror
             </div>
         </div>
@@ -71,7 +94,7 @@
             <table class="w-full min-w-[40rem] border-collapse" id="subjects-table">
                 <thead>
                     <tr>
-                        <th scope="col" class="table-th">Subject name</th>
+                        <th scope="col" class="table-th">Subject</th>
                         <th scope="col" class="table-th w-32">Marks</th>
                         <th scope="col" class="table-th">Remarks</th>
                         <th scope="col" class="table-th w-24"><span class="sr-only">Remove</span></th>
@@ -81,9 +104,16 @@
                     @foreach ($subjectRows as $index => $row)
                         <tr class="subject-row" data-index="{{ $index }}">
                             <td class="table-td">
-                                <label for="subjects_{{ $index }}_name" class="sr-only">Subject name</label>
-                                <input type="text" name="subjects[{{ $index }}][name]" id="subjects_{{ $index }}_name" value="{{ old("subjects.$index.name", data_get($row, 'name')) }}" class="input-field" required>
-                                @error("subjects.$index.name")<p class="field-error" role="alert">{{ $message }}</p>@enderror
+                                <label for="subjects_{{ $index }}_subject_id" class="sr-only">Subject</label>
+                                <select name="subjects[{{ $index }}][subject_id]" id="subjects_{{ $index }}_subject_id" class="input-field" required>
+                                    <option value="">Select subject</option>
+                                    @foreach ($availableSubjects ?? [] as $subject)
+                                        <option value="{{ $subject->id }}" @selected((string) old("subjects.$index.subject_id", data_get($row, 'subject_id')) === (string) $subject->id)>
+                                            {{ $subject->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error("subjects.$index.subject_id")<p class="field-error" role="alert">{{ $message }}</p>@enderror
                             </td>
                             <td class="table-td">
                                 <label for="subjects_{{ $index }}_marks" class="sr-only">Marks</label>
@@ -134,11 +164,20 @@
     </div>
 </form>
 
+@php
+    $subjectOptions = collect($availableSubjects ?? [])->map(fn ($subject) => [
+        'id' => $subject->id,
+        'name' => $subject->name,
+    ])->values();
+@endphp
+
 <template id="subject-row-template">
     <tr class="subject-row">
         <td class="table-td">
-            <label class="sr-only subject-name-label">Subject name</label>
-            <input type="text" class="input-field subject-name" required>
+            <label class="sr-only subject-id-label">Subject</label>
+            <select class="input-field subject-id" required>
+                <option value="">Select subject</option>
+            </select>
         </td>
         <td class="table-td">
             <label class="sr-only subject-marks-label">Marks</label>
@@ -159,6 +198,7 @@
         const tbody = document.getElementById('subjects-tbody');
         const template = document.getElementById('subject-row-template');
         const addBtn = document.getElementById('add-subject-row');
+        const subjectOptions = @json($subjectOptions);
         if (!tbody || !template || !addBtn) return;
 
         const nextIndex = () => {
@@ -170,14 +210,36 @@
             return max + 1;
         };
 
+        const fillSubjectSelect = (select) => {
+            subjectOptions.forEach((subject) => {
+                const option = document.createElement('option');
+                option.value = subject.id;
+                option.textContent = subject.name;
+                select.appendChild(option);
+            });
+        };
+
         const wireRow = (row, index) => {
             row.dataset.index = String(index);
-            const name = row.querySelector('.subject-name');
+            const subject = row.querySelector('.subject-id');
             const marks = row.querySelector('.subject-marks');
             const remarks = row.querySelector('.subject-remarks');
-            if (name) { name.name = `subjects[${index}][name]`; name.id = `subjects_${index}_name`; row.querySelector('.subject-name-label')?.setAttribute('for', name.id); }
-            if (marks) { marks.name = `subjects[${index}][marks]`; marks.id = `subjects_${index}_marks`; row.querySelector('.subject-marks-label')?.setAttribute('for', marks.id); }
-            if (remarks) { remarks.name = `subjects[${index}][remarks]`; remarks.id = `subjects_${index}_remarks`; row.querySelector('.subject-remarks-label')?.setAttribute('for', remarks.id); }
+            if (subject) {
+                if (subject.options.length <= 1) fillSubjectSelect(subject);
+                subject.name = `subjects[${index}][subject_id]`;
+                subject.id = `subjects_${index}_subject_id`;
+                row.querySelector('.subject-id-label')?.setAttribute('for', subject.id);
+            }
+            if (marks) {
+                marks.name = `subjects[${index}][marks]`;
+                marks.id = `subjects_${index}_marks`;
+                row.querySelector('.subject-marks-label')?.setAttribute('for', marks.id);
+            }
+            if (remarks) {
+                remarks.name = `subjects[${index}][remarks]`;
+                remarks.id = `subjects_${index}_remarks`;
+                row.querySelector('.subject-remarks-label')?.setAttribute('for', remarks.id);
+            }
         };
 
         addBtn.addEventListener('click', () => {

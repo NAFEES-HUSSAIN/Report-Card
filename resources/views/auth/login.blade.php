@@ -45,8 +45,6 @@
                         <label for="password" class="input-label !mb-0">Password</label>
                         @if (Route::has('password.request'))
                             <a href="{{ route('password.request') }}" class="text-xs font-semibold text-[var(--gs-primary)] hover:underline">Forgot password?</a>
-                        @else
-                            <span class="text-xs text-[var(--gs-muted)]">Forgot password?</span>
                         @endif
                     </div>
                     <input
@@ -71,10 +69,7 @@
             </form>
 
             <p class="mt-6 text-center text-sm text-[var(--gs-muted)]">
-                New teacher?
-                @if (Route::has('register'))
-                    <a href="{{ route('register') }}" class="font-semibold text-[var(--gs-primary)] hover:underline">Create an account</a>
-                @endif
+                Teacher accounts are provisioned by an administrator.
             </p>
         </article>
     </div>

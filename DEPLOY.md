@@ -67,10 +67,12 @@ Seed creates **staff users only**. Teachers are not publicly registered.
 
 Default local-style accounts (change passwords after first login):
 
-| Email | Password | Role |
-|-------|----------|------|
-| `admin@gradesphere.test` | `password` | admin |
-| `teacher@gradesphere.test` | `password` | teacher |
+| Email / username | Password | Role |
+|------------------|----------|------|
+| `admin@gradesphere.test` / `principal` | `password` | admin |
+| `teacher@gradesphere.test` / `alex.morgan` | `password` | teacher |
+
+Admin manages teacher accounts and feature permissions from `/admin/teachers`.
 
 ## 5. Permissions
 

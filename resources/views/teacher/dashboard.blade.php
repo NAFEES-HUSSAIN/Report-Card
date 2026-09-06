@@ -27,55 +27,55 @@
 />
 
 <div class="grid grid-cols-1 gap-6 xl:grid-cols-5">
-    <section class="card xl:col-span-3" aria-labelledby="recent-heading">
-        <div class="mb-5 flex items-center justify-between gap-3">
-            <h2 id="recent-heading" class="font-display text-xl font-semibold">Recent report cards</h2>
-            @if (Route::has('teacher.ledger'))
-                <a href="{{ route('teacher.ledger') }}" class="text-sm font-semibold text-[var(--gs-primary)] hover:underline">View ledger</a>
-            @endif
-        </div>
-
-        <div class="overflow-x-auto">
-            <table class="w-full border-collapse">
-                <thead>
-                    <tr>
-                        <th scope="col" class="table-th">Student</th>
-                        <th scope="col" class="table-th">Standing</th>
-                        <th scope="col" class="table-th">Average</th>
-                        <th scope="col" class="table-th">Updated</th>
+    <section class="xl:col-span-3" aria-labelledby="recent-heading">
+        <x-data-table title="Recent report cards" min-width="32rem">
+            <thead>
+                <tr>
+                    <th scope="col" class="table-th">Student</th>
+                    <th scope="col" class="table-th">Standing</th>
+                    <th scope="col" class="table-th">Average</th>
+                    <th scope="col" class="table-th">Updated</th>
+                    <th scope="col" class="table-th">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse ($recentReports as $report)
+                    <tr class="table-row">
+                        <th scope="row" class="table-td font-medium">
+                            {{ data_get($report, 'name', '—') }}
+                            <span class="mt-0.5 block font-mono text-xs font-normal text-[var(--gs-muted)]">
+                                {{ data_get($report, 'index_number', '') }}
+                            </span>
+                        </th>
+                        <td class="table-td">
+                            <span class="table-badge-primary">{{ data_get($report, 'standing', '—') }}</span>
+                        </td>
+                        <td class="table-td tabular-nums">
+                            {{ number_format((float) data_get($report, 'average', 0), 1) }}%
+                        </td>
+                        <td class="table-td text-[var(--gs-muted)]">
+                            {{ data_get($report, 'updated_at_human', data_get($report, 'updated_at', '—')) }}
+                        </td>
+                        <x-data-table.row-actions
+                            :edit-url="auth()->user()?->hasPermission(\App\Support\SystemPermissions::TeacherGrades) && Route::has('teacher.form.edit') && data_get($report, 'id') ? route('teacher.form.edit', data_get($report, 'id')) : null"
+                            :delete-url="auth()->user()?->hasPermission(\App\Support\SystemPermissions::TeacherGrades) && Route::has('teacher.report-cards.destroy') && data_get($report, 'report_card_id') ? route('teacher.report-cards.destroy', data_get($report, 'report_card_id')) : null"
+                            delete-confirm="Delete this report card?"
+                        />
                     </tr>
-                </thead>
-                <tbody>
-                    @forelse ($recentReports as $report)
-                        <tr>
-                            <th scope="row" class="table-td font-medium">
-                                {{ data_get($report, 'name', '—') }}
-                                <span class="mt-0.5 block font-mono text-xs font-normal text-[var(--gs-muted)]">
-                                    {{ data_get($report, 'index_number', '') }}
-                                </span>
-                            </th>
-                            <td class="table-td">
-                                <span class="inline-flex rounded-full bg-[var(--gs-primary-soft)] px-2.5 py-1 text-xs font-semibold text-[var(--gs-primary)]">
-                                    {{ data_get($report, 'standing', '—') }}
-                                </span>
-                            </td>
-                            <td class="table-td tabular-nums">
-                                {{ number_format((float) data_get($report, 'average', 0), 1) }}%
-                            </td>
-                            <td class="table-td text-[var(--gs-muted)]">
-                                {{ data_get($report, 'updated_at_human', data_get($report, 'updated_at', '—')) }}
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="4" class="table-td py-10 text-center text-[var(--gs-muted)]">
-                                No recent report cards yet.
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+                @empty
+                    <tr>
+                        <td colspan="5" class="table-td py-10 text-center text-[var(--gs-muted)]">
+                            No recent report cards yet.
+                        </td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </x-data-table>
+        @if (Route::has('teacher.ledger'))
+            <div class="mt-3 text-end">
+                <a href="{{ route('teacher.ledger') }}" class="text-sm font-semibold text-[var(--gs-primary)] hover:underline">View ledger</a>
+            </div>
+        @endif
     </section>
 
     <section class="space-y-4 xl:col-span-2" aria-labelledby="actions-heading">

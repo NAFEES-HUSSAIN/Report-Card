@@ -20,8 +20,13 @@
             ?? (auth()->check()
                 ? (auth()->user()->role?->value ?? 'teacher')
                 : (session()->has('student_id') ? 'student' : 'teacher'));
-        $userName = auth()->user()->name ?? session('student_name') ?? 'Guest';
+        $authUser = auth()->user();
+        $userName = $authUser->name ?? session('student_name') ?? 'Guest';
         $userInitial = strtoupper(substr($userName, 0, 1));
+        $avatarUrl = $authUser?->avatarUrl();
+        $profileRoute = $authUser?->isAdmin()
+            ? (Route::has('admin.profile.edit') ? 'admin.profile.edit' : null)
+            : (Route::has('teacher.profile.edit') ? 'teacher.profile.edit' : null);
     @endphp
 
     <div class="min-h-screen lg:flex" data-app-shell>
@@ -52,12 +57,24 @@
                 <div class="flex items-center gap-3">
                     <x-dark-mode-toggle />
 
-                    <div class="hidden items-center gap-3 rounded-2xl border border-[var(--gs-line)] bg-[var(--gs-surface)] px-3 py-1.5 sm:flex">
-                        <span class="flex h-8 w-8 items-center justify-center rounded-xl brand-gradient text-xs font-bold text-white">
-                            {{ $userInitial }}
-                        </span>
+                    @if ($profileRoute)
+                        <a href="{{ route($profileRoute) }}" class="hidden items-center gap-3 rounded-2xl border border-[var(--gs-line)] bg-[var(--gs-surface)] px-3 py-1.5 sm:flex hover:border-[var(--gs-primary)]/40">
+                    @else
+                        <div class="hidden items-center gap-3 rounded-2xl border border-[var(--gs-line)] bg-[var(--gs-surface)] px-3 py-1.5 sm:flex">
+                    @endif
+                        @if ($avatarUrl)
+                            <img src="{{ $avatarUrl }}" alt="" class="h-8 w-8 rounded-xl object-cover">
+                        @else
+                            <span class="flex h-8 w-8 items-center justify-center rounded-xl brand-gradient text-xs font-bold text-white">
+                                {{ $userInitial }}
+                            </span>
+                        @endif
                         <span class="text-sm font-semibold text-[var(--gs-ink)]">{{ $userName }}</span>
-                    </div>
+                    @if ($profileRoute)
+                        </a>
+                    @else
+                        </div>
+                    @endif
 
                     @auth
                         @if (Route::has('logout'))

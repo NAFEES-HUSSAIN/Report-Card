@@ -17,7 +17,7 @@ class EnsureUserHasRole
         $user = $request->user();
 
         if ($user === null) {
-            return redirect()->route('login');
+            return redirect()->route('splash');
         }
 
         $allowed = collect($roles)

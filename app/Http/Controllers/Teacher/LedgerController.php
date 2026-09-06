@@ -10,6 +10,7 @@ use App\Models\ReportCard;
 use App\Models\SchoolClass;
 use App\Models\Term;
 use App\Support\ReportCardPresenter;
+use App\Support\TableSort;
 use Illuminate\View\View;
 
 class LedgerController extends Controller
@@ -31,8 +32,32 @@ class LedgerController extends Controller
             ->orderBy('sort_order')
             ->value('id');
 
+        $sortColumns = [
+            'rank' => 'report_cards.rank',
+            'index' => 'students.index_number',
+            'name' => 'students.name',
+            'standing' => 'report_cards.standing',
+            'average' => 'report_cards.average',
+            'total' => 'report_cards.total_marks',
+        ];
+
+        [$sort, $direction] = TableSort::from($request, $sortColumns, 'rank');
+
         $baseQuery = ReportCard::query()
+            ->select('report_cards.*')
+            ->join('students', 'students.id', '=', 'report_cards.student_id')
             ->with(['student', 'term', 'schoolClass', 'subjectScores.subject'])
+            ->when($schoolClassId, fn ($query) => $query->where('report_cards.school_class_id', $schoolClassId))
+            ->when($termId, fn ($query) => $query->where('report_cards.term_id', $termId))
+            ->when($search !== '', function ($query) use ($search): void {
+                $query->where(function ($inner) use ($search): void {
+                    $inner
+                        ->where('students.name', 'like', "%{$search}%")
+                        ->orWhere('students.index_number', 'like', "%{$search}%");
+                });
+            });
+
+        $statsQuery = ReportCard::query()
             ->when($schoolClassId, fn ($query) => $query->where('school_class_id', $schoolClassId))
             ->when($termId, fn ($query) => $query->where('term_id', $termId))
             ->when($search !== '', function ($query) use ($search): void {
@@ -43,7 +68,6 @@ class LedgerController extends Controller
                 });
             });
 
-        $statsQuery = clone $baseQuery;
         $totalStudents = (clone $statsQuery)->count();
         $classAverage = round((float) ((clone $statsQuery)->avg('average') ?? 0), 1);
         $passCount = (clone $statsQuery)->where('standing', '!=', Standing::Fail->value)->count();
@@ -51,9 +75,7 @@ class LedgerController extends Controller
         $topStanding = (clone $statsQuery)->orderByDesc('average')->value('standing');
         $topStanding = $topStanding instanceof Standing ? $topStanding->value : ($topStanding ?: '—');
 
-        $students = $baseQuery
-            ->orderBy('rank')
-            ->orderByDesc('average')
+        $students = TableSort::apply($baseQuery, $request, $sortColumns, 'rank')
             ->paginate(10)
             ->withQueryString()
             ->through(fn (ReportCard $card) => $presenter->fromReportCard($card));
@@ -76,6 +98,8 @@ class LedgerController extends Controller
             'selectedClassId' => $schoolClassId,
             'selectedTermId' => $termId,
             'search' => $search,
+            'sort' => $sort,
+            'direction' => $direction,
         ]);
     }
 }

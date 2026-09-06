@@ -11,27 +11,48 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        $this->call(PermissionSeeder::class);
+
         $password = Hash::make('password');
 
-        collect([
-            ['name' => 'GradeSphere Admin', 'email' => 'admin@gradesphere.test', 'role' => UserRole::Admin],
-            ['name' => 'Alex Morgan', 'email' => 'teacher@gradesphere.test', 'role' => UserRole::Teacher],
-            ['name' => 'Jordan Blake', 'email' => 'teacher2@gradesphere.test', 'role' => UserRole::Teacher],
-            ['name' => 'Maya Chen', 'email' => 'maya.chen@gradesphere.test', 'role' => UserRole::Teacher],
-            ['name' => 'Omar Hassan', 'email' => 'omar.hassan@gradesphere.test', 'role' => UserRole::Teacher],
-            ['name' => 'Elena Rossi', 'email' => 'elena.rossi@gradesphere.test', 'role' => UserRole::Teacher],
-            ['name' => 'Daniel Okoye', 'email' => 'daniel.okoye@gradesphere.test', 'role' => UserRole::Teacher],
-            ['name' => 'Sofia Alvarez', 'email' => 'sofia.alvarez@gradesphere.test', 'role' => UserRole::Teacher],
-            ['name' => 'Noah Patel', 'email' => 'noah.patel@gradesphere.test', 'role' => UserRole::Teacher],
-            ['name' => 'Ava Thompson', 'email' => 'ava.thompson@gradesphere.test', 'role' => UserRole::Teacher],
-        ])->each(fn (array $user) => User::query()->updateOrCreate(
-            ['email' => $user['email']],
+        $admin = User::query()->updateOrCreate(
+            ['email' => 'admin@gradesphere.test'],
             [
-                'name' => $user['name'],
-                'role' => $user['role'],
+                'name' => 'Principal Admin',
+                'username' => 'principal',
                 'password' => $password,
+                'role' => UserRole::Admin,
+                'is_active' => true,
                 'email_verified_at' => now(),
             ],
-        ));
+        );
+
+        $teachers = [
+            ['name' => 'Alex Morgan', 'email' => 'teacher@gradesphere.test', 'username' => 'alex.morgan', 'active' => true],
+            ['name' => 'Jordan Blake', 'email' => 'teacher2@gradesphere.test', 'username' => 'jordan.blake', 'active' => true],
+            ['name' => 'Maya Chen', 'email' => 'maya.chen@gradesphere.test', 'username' => 'maya.chen', 'active' => false],
+        ];
+
+        foreach ($teachers as $teacherData) {
+            $teacher = User::query()->updateOrCreate(
+                ['email' => $teacherData['email']],
+                [
+                    'name' => $teacherData['name'],
+                    'username' => $teacherData['username'],
+                    'password' => $password,
+                    'role' => UserRole::Teacher,
+                    'is_active' => $teacherData['active'],
+                    'email_verified_at' => now(),
+                ],
+            );
+
+            if ($teacherData['active']) {
+                $teacher->grantDefaultTeacherPermissions();
+            } else {
+                $teacher->permissions()->detach();
+            }
+        }
+
+        unset($admin);
     }
 }

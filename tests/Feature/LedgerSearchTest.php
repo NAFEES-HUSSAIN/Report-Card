@@ -46,3 +46,63 @@ it('searches the ledger by student name and paginates results', function () {
         ->assertSee('Zara UniqueSearch')
         ->assertDontSee('Other Student');
 });
+
+it('sorts the ledger by student name', function () {
+    $teacher = User::factory()->teacher()->create();
+    $class = GradeCatalog::resolveClass('Form 3B');
+    $term = GradeCatalog::resolveTerm('1st Term');
+
+    $first = Student::factory()->create(['name' => 'Aaron Sort', 'index_number' => 'STU-SORT-001']);
+    $second = Student::factory()->create(['name' => 'Zoe Sort', 'index_number' => 'STU-SORT-002']);
+
+    ReportCard::factory()->create([
+        'student_id' => $first->id,
+        'school_class_id' => $class->id,
+        'term_id' => $term->id,
+        'created_by' => $teacher->id,
+        'average' => 70,
+        'rank' => 2,
+    ]);
+    ReportCard::factory()->create([
+        'student_id' => $second->id,
+        'school_class_id' => $class->id,
+        'term_id' => $term->id,
+        'created_by' => $teacher->id,
+        'average' => 90,
+        'rank' => 1,
+    ]);
+
+    $response = $this->actingAs($teacher)
+        ->get(route('teacher.ledger', [
+            'school_class_id' => $class->id,
+            'term_id' => $term->id,
+            'sort' => 'name',
+            'direction' => 'asc',
+        ]))
+        ->assertOk();
+
+    $response->assertSeeInOrder(['Aaron Sort', 'Zoe Sort']);
+});
+
+it('deletes a report card from the ledger', function () {
+    $teacher = User::factory()->teacher()->create();
+    $class = GradeCatalog::resolveClass('Form 3C');
+    $term = GradeCatalog::resolveTerm('2nd Term');
+    $student = Student::factory()->create();
+
+    $card = ReportCard::factory()->create([
+        'student_id' => $student->id,
+        'school_class_id' => $class->id,
+        'term_id' => $term->id,
+        'created_by' => $teacher->id,
+    ]);
+
+    $this->actingAs($teacher)
+        ->delete(route('teacher.report-cards.destroy', $card))
+        ->assertRedirect(route('teacher.ledger', [
+            'school_class_id' => $class->id,
+            'term_id' => $term->id,
+        ]));
+
+    expect(ReportCard::query()->whereKey($card->id)->exists())->toBeFalse();
+});

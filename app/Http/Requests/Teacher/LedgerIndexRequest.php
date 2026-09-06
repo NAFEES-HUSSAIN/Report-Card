@@ -20,6 +20,8 @@ class LedgerIndexRequest extends FormRequest
             'q' => ['nullable', 'string', 'max:100'],
             'school_class_id' => ['nullable', 'integer', 'exists:school_classes,id'],
             'term_id' => ['nullable', 'integer', 'exists:terms,id'],
+            'sort' => ['nullable', 'string', 'in:rank,index,name,standing,average,total'],
+            'direction' => ['nullable', 'string', 'in:asc,desc'],
         ];
     }
 }

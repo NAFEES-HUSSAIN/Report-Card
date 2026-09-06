@@ -162,6 +162,28 @@ class ReportCardController extends Controller
             ->with('success', 'Report card updated successfully.');
     }
 
+    public function destroy(ReportCard $reportCard, ReportCardCalculator $calculator): RedirectResponse
+    {
+        $this->authorize('delete', $reportCard);
+
+        $schoolClassId = $reportCard->school_class_id;
+        $termId = $reportCard->term_id;
+
+        DB::transaction(function () use ($reportCard): void {
+            $reportCard->subjectScores()->delete();
+            $reportCard->delete();
+        });
+
+        $calculator->refreshRanksForClassTerm($schoolClassId, $termId);
+
+        return redirect()
+            ->route('teacher.ledger', [
+                'school_class_id' => $schoolClassId,
+                'term_id' => $termId,
+            ])
+            ->with('success', 'Report card deleted.');
+    }
+
     /**
      * @param  array<int, array{subject_id: int|string, marks: mixed, remarks?: string|null}>  $subjects
      */

@@ -29,6 +29,6 @@ class ReportCardPolicy
 
     public function delete(User $user, ReportCard $reportCard): bool
     {
-        return $user->isAdmin();
+        return $user->isTeacher();
     }
 }

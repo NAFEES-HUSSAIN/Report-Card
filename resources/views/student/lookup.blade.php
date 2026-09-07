@@ -6,8 +6,8 @@
 <section class="flex min-h-screen items-center justify-center px-4 py-24">
     <article class="card w-full max-w-md">
         <header class="mb-8 text-center">
-            <div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl brand-gradient text-lg font-bold text-white shadow-lg shadow-violet-500/30">
-                GS
+            <div class="mx-auto mb-4 flex justify-center">
+                <x-brand-logo />
             </div>
             <h1 class="page-title text-2xl">Find your report card</h1>
             <p class="page-subtitle">Enter your index number — no password required.</p>

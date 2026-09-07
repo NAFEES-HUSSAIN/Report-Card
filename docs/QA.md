@@ -27,8 +27,10 @@
 - [ ] Sign out returns to lookup and blocks dashboard
 
 ## Security
-- [ ] Guest cannot open `/teacher/dashboard` or `/admin/dashboard`
-- [ ] `/register` returns 404
+- [x] Guest cannot open `/teacher/dashboard` or `/admin/dashboard` (redirects to splash — correct)
+- [x] `/register` returns 404
 - [ ] Student session cannot open teacher routes
 - [ ] Teacher cannot open `/admin/dashboard`
 - [ ] Inactive teacher cannot sign in
+
+> Step B signed off locally: guest protected routes → splash; `/register` → 404.

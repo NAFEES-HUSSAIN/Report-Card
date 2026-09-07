@@ -13,6 +13,7 @@
     $adminLinks = [
         ['label' => 'Dashboard', 'route' => 'admin.dashboard', 'match' => 'admin.dashboard', 'permission' => SystemPermissions::AdminOverview],
         ['label' => 'Teachers', 'route' => 'admin.teachers.index', 'match' => 'admin.teachers.*', 'permission' => SystemPermissions::AdminTeachers],
+        ['label' => 'School logo', 'route' => 'admin.branding.edit', 'match' => 'admin.branding.*', 'permission' => SystemPermissions::AdminProfiles],
         ['label' => 'My profile', 'route' => 'admin.profile.edit', 'match' => 'admin.profile.*', 'permission' => null],
         ['label' => 'Teacher portal', 'route' => 'teacher.dashboard', 'match' => 'teacher.*', 'permission' => SystemPermissions::TeacherDashboard],
         ['label' => 'Student portal', 'route' => 'student.lookup', 'match' => 'student.*', 'permission' => null],
@@ -55,9 +56,7 @@
 
 <aside {{ $attributes->merge(['class' => 'flex h-full flex-col border-r border-[var(--gs-line)] bg-[var(--gs-surface-elevated)]']) }}>
     <div class="flex items-center gap-3 border-b border-[var(--gs-line)] px-5 py-5">
-        <span class="flex h-10 w-10 items-center justify-center rounded-2xl brand-gradient text-sm font-bold text-white shadow-lg shadow-violet-500/30">
-            GS
-        </span>
+        <x-brand-logo />
         <div>
             <p class="font-display text-lg font-semibold tracking-tight text-[var(--gs-ink)]">GradeSphere</p>
             <p class="text-xs text-[var(--gs-muted)]">{{ $portalLabel }}</p>

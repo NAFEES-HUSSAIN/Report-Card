@@ -10,8 +10,8 @@
     </div>
 
     <div class="relative z-10 mx-auto max-w-3xl text-center text-white">
-        <div class="splash-enter mx-auto mb-8 flex h-20 w-20 items-center justify-center rounded-3xl bg-white/15 text-2xl font-bold backdrop-blur-md ring-1 ring-white/30">
-            GS
+        <div class="splash-enter mx-auto mb-8 flex justify-center">
+            <x-brand-logo size="lg" />
         </div>
 
         <h1 class="splash-enter font-display text-5xl font-bold tracking-tight sm:text-6xl">GradeSphere</h1>

@@ -23,8 +23,10 @@ class BrandAssets
     public static function schoolLogoUrl(): string
     {
         foreach (self::SchoolLogoCandidates as $relative) {
-            if (is_file(public_path($relative))) {
-                return asset($relative);
+            $absolute = public_path($relative);
+
+            if (is_file($absolute)) {
+                return asset($relative).'?v='.filemtime($absolute);
             }
         }
 

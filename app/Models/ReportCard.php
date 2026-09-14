@@ -65,4 +65,25 @@ class ReportCard extends Model
     {
         return $this->hasMany(SubjectScore::class);
     }
+
+    /**
+     * Newest report card for a student (prefers the current academic year, any term).
+     */
+    public static function latestForStudent(Student $student): ?self
+    {
+        $year = AcademicYear::current();
+
+        return static::query()
+            ->with(['student', 'term', 'schoolClass', 'subjectScores.subject'])
+            ->where('student_id', $student->id)
+            ->when(
+                $year,
+                fn ($query) => $query->whereHas(
+                    'term',
+                    fn ($termQuery) => $termQuery->where('academic_year_id', $year->id),
+                ),
+            )
+            ->latest('id')
+            ->first();
+    }
 }

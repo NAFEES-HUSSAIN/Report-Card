@@ -11,7 +11,7 @@
 
     <div class="relative z-10 mx-auto max-w-3xl text-center text-white">
         <div class="splash-enter mx-auto mb-8 flex justify-center">
-            <x-brand-logo size="lg" />
+            <x-brand-logo size="xl" />
         </div>
 
         <h1 class="splash-enter font-display text-5xl font-bold tracking-tight sm:text-6xl">GradeSphere</h1>

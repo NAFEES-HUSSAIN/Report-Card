@@ -1,54 +1,32 @@
 <?php
 
-use App\Models\SiteSetting;
 use App\Models\User;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
+use App\Support\BrandAssets;
+use Illuminate\Support\Facades\Route;
 
-it('lets an admin upload a school logo and stores only the path in the database', function () {
-    Storage::fake('public');
-
-    $admin = User::factory()->admin()->create();
-    $file = UploadedFile::fake()->image('school-logo.png', 120, 120);
-
-    $this->actingAs($admin)
-        ->put(route('admin.branding.update'), [
-            'logo' => $file,
-        ])
-        ->assertRedirect(route('admin.branding.edit'));
-
-    $path = SiteSetting::logoPath();
-
-    expect($path)->not->toBeNull()
-        ->and($path)->toStartWith('branding/')
-        ->and(Storage::disk('public')->exists($path))->toBeTrue();
-
-    $this->assertDatabaseHas('site_settings', [
-        'key' => SiteSetting::LogoPath,
-        'value' => $path,
-    ]);
+it('serves a static school logo from public branding assets', function () {
+    expect(BrandAssets::schoolLogoUrl())->toContain('images/branding/school-logo');
 });
 
-it('removes the logo file from storage and clears the database path', function () {
-    Storage::fake('public');
-
-    $admin = User::factory()->admin()->create();
-    $path = UploadedFile::fake()->image('old-logo.png')->store('branding', 'public');
-    SiteSetting::setValue(SiteSetting::LogoPath, $path);
-
-    $this->actingAs($admin)
-        ->delete(route('admin.branding.destroy'))
-        ->assertRedirect(route('admin.branding.edit'));
-
-    expect(Storage::disk('public')->exists($path))->toBeFalse()
-        ->and(SiteSetting::logoPath())->toBeNull();
-});
-
-it('shows the branding page to admins', function () {
-    $admin = User::factory()->admin()->create();
-
-    $this->actingAs($admin)
-        ->get(route('admin.branding.edit'))
+it('shows the school logo on the splash screen', function () {
+    $this->get(route('splash'))
         ->assertOk()
-        ->assertSee('School logo');
+        ->assertSee('images/branding/school-logo', false)
+        ->assertSee('alt="School logo"', false);
+});
+
+it('shows the school logo in the admin sidebar and has no branding upload route', function () {
+    $admin = User::factory()->admin()->create();
+
+    expect(Route::has('admin.branding.edit'))->toBeFalse();
+
+    $this->actingAs($admin)
+        ->get(route('admin.dashboard'))
+        ->assertOk()
+        ->assertSee('images/branding/school-logo', false)
+        ->assertSee('h-14 w-14', false);
+
+    $this->actingAs($admin)
+        ->get('/admin/branding')
+        ->assertNotFound();
 });

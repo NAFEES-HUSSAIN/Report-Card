@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Admin\BrandingController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\TeacherController;
@@ -67,10 +66,6 @@ Route::middleware(['auth', 'role:admin', 'permission:'.SystemPermissions::AdminO
         Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
 
         Route::middleware('permission:'.SystemPermissions::AdminProfiles)->group(function (): void {
-            Route::get('/branding', [BrandingController::class, 'edit'])->name('branding.edit');
-            Route::put('/branding', [BrandingController::class, 'update'])->name('branding.update');
-            Route::delete('/branding', [BrandingController::class, 'destroy'])->name('branding.destroy');
-
             Route::get('/users/{user}/profile', [ProfileController::class, 'edit'])->name('users.profile.edit');
             Route::put('/users/{user}/profile', [ProfileController::class, 'update'])->name('users.profile.update');
         });

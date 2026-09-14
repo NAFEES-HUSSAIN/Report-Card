@@ -17,8 +17,8 @@
 <body class="min-h-full bg-[var(--gs-surface)] text-[var(--gs-ink)]">
     <header class="absolute inset-x-0 top-0 z-20 flex items-center justify-between px-4 py-4 sm:px-8">
         <a href="{{ Route::has('splash') ? route('splash') : url('/') }}" class="flex items-center gap-3">
-            <x-brand-logo />
-            <span class="font-display text-lg font-semibold tracking-tight">GradeSphere</span>
+            <x-brand-logo size="sm" />
+            <span class="font-display text-lg font-semibold tracking-tight leading-none">GradeSphere</span>
         </a>
         <x-dark-mode-toggle />
     </header>

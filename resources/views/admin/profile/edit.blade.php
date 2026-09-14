@@ -25,19 +25,22 @@
 
     <section class="card flex flex-col gap-6 sm:flex-row sm:items-center">
         <div class="shrink-0">
-            @if ($profileUser->avatarUrl())
-                <img src="{{ $profileUser->avatarUrl() }}" alt="" class="h-24 w-24 rounded-3xl object-cover ring-2 ring-[var(--gs-line)]">
-            @else
-                <span class="flex h-24 w-24 items-center justify-center rounded-3xl brand-gradient text-2xl font-bold text-white">
-                    {{ strtoupper(substr($profileUser->name, 0, 1)) }}
-                </span>
-            @endif
+            <x-user-avatar :user="$profileUser" size="lg" data-avatar-preview />
         </div>
-        <div class="min-w-0 flex-1">
-            <label for="avatar" class="input-label">Profile photo</label>
-            <input type="file" name="avatar" id="avatar" accept="image/*" class="input-field">
-            @error('avatar')<p class="field-error">{{ $message }}</p>@enderror
-            <p class="mt-2 text-xs text-[var(--gs-muted)]">JPG or PNG, max 2 MB.</p>
+        <div class="min-w-0 flex-1 space-y-3">
+            <div>
+                <label for="avatar" class="input-label">Profile photo</label>
+                <input type="file" name="avatar" id="avatar" accept="image/*" class="input-field">
+                @error('avatar')<p class="field-error">{{ $message }}</p>@enderror
+                <p class="mt-2 text-xs text-[var(--gs-muted)]">JPG or PNG, max 2 MB. New photo replaces the old one (old file is deleted).</p>
+            </div>
+
+            @if ($profileUser->hasCustomAvatar())
+                <label class="flex items-center gap-2 text-sm text-[var(--gs-ink)]">
+                    <input type="checkbox" name="remove_avatar" value="1" class="rounded border-[var(--gs-line)] text-rose-600" @checked(old('remove_avatar'))>
+                    Remove current photo (show default image)
+                </label>
+            @endif
         </div>
     </section>
 
@@ -91,3 +94,53 @@
     <button type="submit" class="btn-primary">Save profile</button>
 </form>
 @endsection
+
+@push('scripts')
+<script>
+    (function () {
+        const defaultSrc = @json(asset('images/defaults/user-avatar.png'));
+        const fileInput = document.getElementById('avatar');
+        const removeInput = document.querySelector('input[name="remove_avatar"]');
+        // Preview only the profile-page photo — topbar updates after a successful save.
+        const previewImg = document.querySelector('[data-avatar-preview]');
+
+        if (! previewImg) {
+            return;
+        }
+
+        const originalSrc = previewImg.getAttribute('data-original-src') || previewImg.src;
+
+        const setPreview = (src) => {
+            previewImg.src = src;
+        };
+
+        fileInput?.addEventListener('change', () => {
+            const file = fileInput.files?.[0];
+            if (! file) {
+                setPreview(removeInput?.checked ? defaultSrc : originalSrc);
+                return;
+            }
+
+            if (removeInput) {
+                removeInput.checked = false;
+            }
+
+            const reader = new FileReader();
+            reader.onload = () => setPreview(reader.result);
+            reader.readAsDataURL(file);
+        });
+
+        removeInput?.addEventListener('change', () => {
+            if (removeInput.checked) {
+                if (fileInput) {
+                    fileInput.value = '';
+                }
+                setPreview(defaultSrc);
+                return;
+            }
+
+            setPreview(originalSrc);
+        });
+    })();
+</script>
+@endpush

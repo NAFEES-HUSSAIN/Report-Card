@@ -22,8 +22,6 @@
                 : (session()->has('student_id') ? 'student' : 'teacher'));
         $authUser = auth()->user();
         $userName = $authUser->name ?? session('student_name') ?? 'Guest';
-        $userInitial = strtoupper(substr($userName, 0, 1));
-        $avatarUrl = $authUser?->avatarUrl();
         $profileRoute = $authUser?->isAdmin()
             ? (Route::has('admin.profile.edit') ? 'admin.profile.edit' : null)
             : (Route::has('teacher.profile.edit') ? 'teacher.profile.edit' : null);
@@ -62,11 +60,11 @@
                     @else
                         <div class="hidden items-center gap-3 rounded-2xl border border-[var(--gs-line)] bg-[var(--gs-surface)] px-3 py-1.5 sm:flex">
                     @endif
-                        @if ($avatarUrl)
-                            <img src="{{ $avatarUrl }}" alt="" class="h-8 w-8 rounded-xl object-cover">
+                        @if ($authUser)
+                            <x-user-avatar :user="$authUser" size="sm" class="!ring-0" />
                         @else
                             <span class="flex h-8 w-8 items-center justify-center rounded-xl brand-gradient text-xs font-bold text-white">
-                                {{ $userInitial }}
+                                {{ strtoupper(substr($userName, 0, 1)) }}
                             </span>
                         @endif
                         <span class="text-sm font-semibold text-[var(--gs-ink)]">{{ $userName }}</span>
@@ -137,5 +135,6 @@
             });
         })();
     </script>
+    @stack('scripts')
 </body>
 </html>

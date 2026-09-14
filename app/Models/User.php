@@ -82,12 +82,36 @@ class User extends Authenticatable
         $this->syncPermissionKeys(SystemPermissions::teacherKeys());
     }
 
+    public function hasCustomAvatar(): bool
+    {
+        return filled($this->avatar_path) && Storage::disk('public')->exists($this->avatar_path);
+    }
+
     public function avatarUrl(): ?string
     {
-        if (! filled($this->avatar_path)) {
+        if (! $this->hasCustomAvatar()) {
             return null;
         }
 
-        return Storage::disk('public')->url($this->avatar_path);
+        return Storage::disk('public')->url($this->avatar_path)
+            .'?v='.($this->updated_at?->getTimestamp() ?? time())
+            .'&p='.sha1((string) $this->avatar_path);
+    }
+
+    /**
+     * Always returns a displayable photo URL (uploaded avatar or default image).
+     */
+    public function profilePhotoUrl(): string
+    {
+        return $this->avatarUrl() ?? asset('images/defaults/user-avatar.png');
+    }
+
+    public function deleteStoredAvatar(): void
+    {
+        if (filled($this->avatar_path) && Storage::disk('public')->exists($this->avatar_path)) {
+            Storage::disk('public')->delete($this->avatar_path);
+        }
+
+        $this->avatar_path = null;
     }
 }

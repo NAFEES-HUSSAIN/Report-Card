@@ -8,7 +8,7 @@ use App\Models\User;
 use App\Support\SystemPermissions;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\View\View;
@@ -30,7 +30,7 @@ class ProfileController extends Controller
 
         return view('admin.profile.edit', [
             'shellRole' => $actor->isAdmin() ? 'admin' : 'teacher',
-            'profileUser' => $target,
+            'profileUser' => $target->fresh(),
             'canEditRole' => $actor->isAdmin() && ! $target->is($actor),
         ]);
     }
@@ -53,6 +53,7 @@ class ProfileController extends Controller
             'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($target->id)],
             'password' => ['nullable', 'confirmed', Password::defaults()],
             'avatar' => ['nullable', 'image', 'max:2048'],
+            'remove_avatar' => ['sometimes', 'boolean'],
         ];
 
         if ($actor->isAdmin() && ! $editingSelf) {
@@ -75,14 +76,22 @@ class ProfileController extends Controller
             $target->password = $validated['password'];
         }
 
+        if ($request->boolean('remove_avatar') && ! $request->hasFile('avatar')) {
+            $target->deleteStoredAvatar();
+        }
+
         if ($request->hasFile('avatar')) {
-            if (filled($target->avatar_path)) {
-                Storage::disk('public')->delete($target->avatar_path);
-            }
+            $target->deleteStoredAvatar();
             $target->avatar_path = $request->file('avatar')->store('avatars', 'public');
         }
 
         $target->save();
+
+        if ($editingSelf) {
+            // Re-login so the next request (and topbar) use the fresh avatar_path.
+            Auth::login($target->fresh());
+            $actor = auth()->user();
+        }
 
         $route = $editingSelf
             ? ($actor->isAdmin() ? 'admin.profile.edit' : 'teacher.profile.edit')

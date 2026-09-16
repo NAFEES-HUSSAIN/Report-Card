@@ -273,7 +273,12 @@
 
         list.addEventListener('click', (event) => {
             const btn = event.target.closest('.remove-subject-row');
-            if (!btn || list.querySelectorAll('.subject-row').length <= 1) return;
+            if (!btn) return;
+            if (list.querySelectorAll('.subject-row').length <= 1) {
+                window.alert('Keep at least one subject row.');
+                return;
+            }
+            if (!window.confirm('Remove this subject row? Marks entered here will be lost.')) return;
             btn.closest('.subject-row')?.remove();
         });
     })();

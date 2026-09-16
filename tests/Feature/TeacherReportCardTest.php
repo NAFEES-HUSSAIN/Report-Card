@@ -2,6 +2,7 @@
 
 use App\Enums\Standing;
 use App\Models\ReportCard;
+use App\Models\Student;
 use App\Models\User;
 use App\Services\ReportCardCalculator;
 use App\Support\GradeCatalog;
@@ -89,4 +90,52 @@ it('lists catalog subjects alphabetically', function () {
         'Tamil',
         'Tamil Lit',
     ]);
+});
+
+it('allows a teacher to update an existing report card', function () {
+    $teacher = User::factory()->teacher()->create();
+    $subjects = GradeCatalog::subjects();
+    $math = $subjects->firstWhere('name', 'Maths');
+
+    $this->actingAs($teacher)
+        ->post(route('teacher.form.store'), [
+            'index_number' => 'STU-2026-0888',
+            'name' => 'Update Me',
+            'class_name' => 'Form 3B',
+            'term' => '1st Term',
+            'subjects' => [
+                ['subject_id' => $math->id, 'marks' => 70, 'remarks' => 'OK'],
+            ],
+            'days_present' => 80,
+            'days_absent' => 0,
+            'total_days' => 80,
+            'teacher_remark' => 'First remark',
+        ])
+        ->assertRedirect();
+
+    $student = Student::query()->where('index_number', 'STU-2026-0888')->first();
+    expect($student)->not->toBeNull();
+
+    $this->actingAs($teacher)
+        ->put(route('teacher.form.update', $student), [
+            'index_number' => 'STU-2026-0888',
+            'name' => 'Update Me Junior',
+            'class_name' => 'Form 3B',
+            'term' => '1st Term',
+            'subjects' => [
+                ['subject_id' => $math->id, 'marks' => 92, 'remarks' => 'Excellent'],
+            ],
+            'days_present' => 85,
+            'days_absent' => 0,
+            'total_days' => 85,
+            'teacher_remark' => 'Improved a lot',
+        ])
+        ->assertRedirect();
+
+    $card = ReportCard::query()->where('student_id', $student->id)->first();
+
+    expect($student->refresh()->name)->toBe('Update Me Junior')
+        ->and((float) $card->average)->toBe(92.0)
+        ->and($card->teacher_remark)->toBe('Improved a lot')
+        ->and($card->subjectScores()->first()->remarks)->toBe('Excellent');
 });

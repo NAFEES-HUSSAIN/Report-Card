@@ -17,8 +17,13 @@
 - [ ] Search by name/index filters results
 - [ ] Pagination appears when > 10 rows
 - [ ] Edit existing student marks
+- [ ] Delete shows confirm; Cancel keeps; OK deletes
+- [ ] Mobile: swipe table to Actions; Edit/Delete tappable
 - [ ] Profile page updates username/password
 - [ ] Logout works
+
+## Delete / Edit map
+See `docs/EDIT-DELETE-QA.md` for every delete confirm message and edit path.
 
 ## Student
 - [ ] Lookup with a real index number

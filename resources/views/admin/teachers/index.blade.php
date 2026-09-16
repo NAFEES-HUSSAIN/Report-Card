@@ -67,7 +67,7 @@
                 <x-data-table.row-actions
                     :edit-url="route('admin.teachers.edit', $teacher)"
                     :delete-url="route('admin.teachers.destroy', $teacher)"
-                    delete-confirm="Remove this teacher account?"
+                    delete-confirm="Remove this teacher account? They will no longer be able to sign in."
                 />
             </tr>
         @empty

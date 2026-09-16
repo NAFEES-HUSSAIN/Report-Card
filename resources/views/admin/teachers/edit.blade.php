@@ -20,9 +20,9 @@
     </div>
 </form>
 
-<form method="POST" action="{{ route('admin.teachers.destroy', $teacher) }}" class="mt-8" onsubmit="return confirm('Remove this teacher account?')">
+<form method="POST" action="{{ route('admin.teachers.destroy', $teacher) }}" class="mt-8" onsubmit="return confirm('Remove this teacher account? They will no longer be able to sign in.')">
     @csrf
     @method('DELETE')
-    <button type="submit" class="btn-danger">Delete teacher</button>
+    <button type="submit" class="btn-danger w-full sm:w-auto">Delete teacher</button>
 </form>
 @endsection

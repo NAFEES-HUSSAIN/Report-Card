@@ -151,10 +151,10 @@ We use this cycle for **every** feature:
 Work **one item at a time**. When done, tick it and move the next item up.
 
 ### Priority 1 — Make shipping repeatable
-1. [ ] **Git every milestone** — branch + clear commit after each working feature  
-2. [ ] **Bug → Pest test** — every production bug gets one automated test  
+1. [x] **Git every milestone** — branch + clear commit after each working feature *(practiced with GitHub Desktop: branch → commit → merge → push)*  
+2. [x] **Bug → Pest test** — every production bug gets one automated test *(ran StudentDeleteCleanupTest — 4 passed; understood bug→fix→test habit)*  
 3. [x] **Staging mindset** — practice risky changes on a copy before live (or local temp DB) *(Situation B done; full staging site still later)*  
-4. [ ] **Named backups** — `YYYY-MM-DD_reason_dbname.sql` + keep folder organized  
+4. [x] **Named backups** — `YYYY-MM-DD_reason_dbname.sql` + keep folder organized *(practiced: renamed live export in D:\SEPTEMBER\Backups)*  
 
 ### Priority 2 — Independence
 5. [ ] **Solo feature drill** — e.g. “publish report card” flag; you drive plan → build → test → deploy with mentor only reviewing  
@@ -221,6 +221,8 @@ THEN (perfect POS)
 
 > **Easy deploy order + PowerShell/SSH commands:** see [`docs/DEPLOY-ORDER-CHEATSHEET.md`](DEPLOY-ORDER-CHEATSHEET.md)  
 > **Git with GitHub Desktop:** see [`docs/GITHUB-DESKTOP-HABIT.md`](GITHUB-DESKTOP-HABIT.md)  
+> **Bug → Pest habit:** see [`docs/BUG-TO-PEST-HABIT.md`](BUG-TO-PEST-HABIT.md)  
+> **Named backups:** see [`docs/NAMED-BACKUPS-HABIT.md`](NAMED-BACKUPS-HABIT.md)  
 > **Edit/Delete map:** see [`docs/EDIT-DELETE-QA.md`](EDIT-DELETE-QA.md)
 
 ### Playbook: UI-only change (Blade / PHP, no DB)
@@ -266,6 +268,28 @@ THEN (perfect POS)
 ---
 
 ## Session log (newest first)
+
+### 2026-09-16 — Named backups habit completed
+- **You did:** renamed backup with date + reason style  
+- **Priority 1:** all four shipping habits complete (Git, Pest, Staging/Situation B, Named backups)  
+- **Next:** Priority 2 — pick one (solo feature / laravel log first / draw data model)
+
+### 2026-09-16 — Named backups lesson started
+- **Created:** `docs/NAMED-BACKUPS-HABIT.md`  
+- **Your action:** rename `u738629442_gradesphere.sql` to date+reason style  
+- **Meaning:** clear backup filenames so you know when/why each copy exists  
+
+### 2026-09-16 — Bug → Pest habit understood
+- **You ran:** `php artisan test --compact tests/Feature/StudentDeleteCleanupTest.php`  
+- **Result:** 4 passed (22 assertions)  
+- **Lesson:** robot tests guard the orphan-student delete bug  
+- **Rule to keep:** Bug → Fix → Pest test → Run → Commit  
+
+### 2026-09-16 — Git milestone habit completed (GitHub Desktop)
+- **Practiced:** create branch `fix/edit-delete-and-docs` → bring changes → commit → merge to `main` → push  
+- **Learned:** tiny fixes can stay on main; bigger work uses branch → merge  
+- **Dialog tip:** choose **Bring my changes to [new branch]** when switching with uncommitted work  
+- **Next:** Bug → Pest test habit (`docs/BUG-TO-PEST-HABIT.md`)
 
 ### 2026-09-16 — Git habit guide (GitHub Desktop)
 - **Created:** `docs/GITHUB-DESKTOP-HABIT.md`  
@@ -331,12 +355,11 @@ After **every** learning task:
 
 | Field | Value |
 |---|---|
-| **Task name** | Git milestone habit (GitHub Desktop) |
-| **Goal** | Commit working milestones with a clear Summary; optional Push |
-| **Success looks like** | Edit/Delete + docs committed; Priority 1 #1 ready to tick |
-| **You will do** | Follow `docs/GITHUB-DESKTOP-HABIT.md` and click Commit |
-| **Mentor will do** | Guide messages; then start Bug → Pest lesson |
-| **Update this file after?** | Yes — after you say commit done |
+| **Task name** | Priority 2 — choose next lesson |
+| **Goal** | Grow independence after shipping habits |
+| **Success looks like** | One Priority 2 item started |
+| **Options** | 5) Solo feature drill · 6) Laravel log first · 7) Draw the data model |
+| **Update this file after?** | Yes |
 
 ---
 

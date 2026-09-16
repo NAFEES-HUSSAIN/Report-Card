@@ -77,6 +77,13 @@
             </tbody>
         </table>
 
+        @if (filled(data_get($student, 'teacher_remark')))
+            <div class="mt-6 rounded-2xl border border-[var(--gs-line)] bg-[var(--gs-surface)] px-4 py-4">
+                <p class="text-xs font-semibold uppercase tracking-wide text-[var(--gs-muted)]">Teacher remark</p>
+                <p class="mt-2 text-sm leading-relaxed text-[var(--gs-ink)]">{{ data_get($student, 'teacher_remark') }}</p>
+            </div>
+        @endif
+
         <footer class="mt-6 grid grid-cols-1 gap-3 border-t border-[var(--gs-line)] pt-6 sm:grid-cols-2 lg:grid-cols-4">
             <div class="rounded-2xl bg-[var(--gs-primary-soft)] px-4 py-3">
                 <p class="text-xs font-medium uppercase tracking-wide text-[var(--gs-muted)]">Average</p>

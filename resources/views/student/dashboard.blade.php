@@ -17,6 +17,7 @@
     $daysAbsent = (int) data_get($student, 'days_absent', 0);
     $totalDays = (int) data_get($student, 'total_days', 0);
     $hasReportCard = filled(data_get($student, 'report_card_id'));
+    $teacherRemark = data_get($student, 'teacher_remark');
     $attendancePct = $totalDays > 0
         ? round(($daysPresent / $totalDays) * 100)
         : null;
@@ -85,6 +86,15 @@
             @endif
         </article>
     </section>
+
+    @if ($hasReportCard && filled($teacherRemark))
+        <section class="student-dash-panel" aria-labelledby="student-dash-remark-heading">
+            <div class="student-dash-panel-copy">
+                <h2 id="student-dash-remark-heading" class="student-dash-panel-title">Teacher remark</h2>
+                <p class="student-dash-panel-text">{{ $teacherRemark }}</p>
+            </div>
+        </section>
+    @endif
 
     <section class="student-dash-panel" aria-labelledby="student-dash-actions-heading">
         <div class="student-dash-panel-copy">

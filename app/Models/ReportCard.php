@@ -22,6 +22,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'days_present',
     'days_absent',
     'total_days',
+    'teacher_remark',
 ])]
 class ReportCard extends Model
 {

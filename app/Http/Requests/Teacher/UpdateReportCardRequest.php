@@ -34,6 +34,7 @@ class UpdateReportCardRequest extends FormRequest
             'subjects.*.subject_id' => ['required', 'integer', 'exists:subjects,id', 'distinct'],
             'subjects.*.marks' => ['required', 'numeric', 'min:0', 'max:100'],
             'subjects.*.remarks' => ['nullable', 'string', 'max:255'],
+            'teacher_remark' => ['nullable', 'string', 'max:1000'],
             'days_present' => ['required', 'integer', 'min:0'],
             'days_absent' => ['required', 'integer', 'min:0'],
             'total_days' => ['required', 'integer', 'min:0', 'gte:'.((int) $this->input('days_present') + (int) $this->input('days_absent'))],

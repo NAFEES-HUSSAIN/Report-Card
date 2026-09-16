@@ -24,6 +24,7 @@ class ReportCardPresenter
      *     days_present: int,
      *     days_absent: int,
      *     total_days: int,
+     *     teacher_remark: string|null,
      *     subjects: Collection<int, object>,
      *     report_card_id: int|null,
      *     school_class_id: int|null,
@@ -52,6 +53,7 @@ class ReportCardPresenter
             'days_present' => (int) $reportCard->days_present,
             'days_absent' => (int) $reportCard->days_absent,
             'total_days' => (int) $reportCard->total_days,
+            'teacher_remark' => $reportCard->teacher_remark,
             'subjects' => $reportCard->subjectScores->map(fn ($score) => (object) [
                 'id' => $score->id,
                 'subject_id' => $score->subject_id,
@@ -107,6 +109,7 @@ class ReportCardPresenter
             'days_present' => 0,
             'days_absent' => 0,
             'total_days' => 0,
+            'teacher_remark' => null,
             'subjects' => collect(),
             'updated_at' => null,
             'updated_at_human' => null,

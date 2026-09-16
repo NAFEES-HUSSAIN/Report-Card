@@ -142,6 +142,23 @@
         </div>
     </section>
 
+    <section class="card" aria-labelledby="teacher-remark-heading">
+        <h2 id="teacher-remark-heading" class="mb-2 font-display text-lg font-semibold">Teacher remark</h2>
+        <p class="mb-5 text-sm text-[var(--gs-muted)]">Optional overall comment for this report card. Students can see it on their dashboard and full report.</p>
+        <div>
+            <label for="teacher_remark" class="input-label">Remark (optional)</label>
+            <textarea
+                name="teacher_remark"
+                id="teacher_remark"
+                rows="3"
+                maxlength="1000"
+                class="input-field min-h-[6rem] resize-y"
+                placeholder="e.g. Excellent progress this term. Keep up the good work."
+            >{{ old('teacher_remark', data_get($student ?? null, 'teacher_remark')) }}</textarea>
+            @error('teacher_remark')<p class="field-error" role="alert">{{ $message }}</p>@enderror
+        </div>
+    </section>
+
     <section class="card" aria-labelledby="attendance-heading">
         <h2 id="attendance-heading" class="mb-5 font-display text-lg font-semibold">Attendance</h2>
         <div class="grid grid-cols-1 gap-5 sm:grid-cols-3">

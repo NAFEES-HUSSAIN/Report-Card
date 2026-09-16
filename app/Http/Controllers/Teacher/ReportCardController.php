@@ -60,6 +60,7 @@ class ReportCardController extends Controller
                     'days_present' => $request->integer('days_present'),
                     'days_absent' => $request->integer('days_absent'),
                     'total_days' => $request->integer('total_days'),
+                    'teacher_remark' => $request->string('teacher_remark')->toString() ?: null,
                 ],
             );
 
@@ -145,6 +146,7 @@ class ReportCardController extends Controller
                     'days_present' => $request->integer('days_present'),
                     'days_absent' => $request->integer('days_absent'),
                     'total_days' => $request->integer('total_days'),
+                    'teacher_remark' => $request->string('teacher_remark')->toString() ?: null,
                 ],
             );
 

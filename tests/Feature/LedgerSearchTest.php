@@ -104,5 +104,6 @@ it('deletes a report card from the ledger', function () {
             'term_id' => $term->id,
         ]));
 
-    expect(ReportCard::query()->whereKey($card->id)->exists())->toBeFalse();
+    expect(ReportCard::query()->whereKey($card->id)->exists())->toBeFalse()
+        ->and(Student::query()->whereKey($student->id)->exists())->toBeFalse();
 });

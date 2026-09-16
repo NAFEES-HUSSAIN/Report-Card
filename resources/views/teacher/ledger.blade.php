@@ -107,7 +107,7 @@
                 <x-data-table.row-actions
                     :edit-url="auth()->user()?->hasPermission(\App\Support\SystemPermissions::TeacherGrades) && Route::has('teacher.form.edit') && data_get($student, 'id') ? route('teacher.form.edit', data_get($student, 'id')) : null"
                     :delete-url="auth()->user()?->hasPermission(\App\Support\SystemPermissions::TeacherGrades) && Route::has('teacher.report-cards.destroy') && data_get($student, 'report_card_id') ? route('teacher.report-cards.destroy', data_get($student, 'report_card_id')) : null"
-                    delete-confirm="Delete this report card? Rankings will be recalculated."
+                    delete-confirm="Delete this report card? Rankings will be recalculated. If this is the student's only record, they will be removed from student lookup."
                 />
             </tr>
         @empty

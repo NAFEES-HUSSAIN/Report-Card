@@ -1,11 +1,19 @@
 <?php
 
+use App\Models\ReportCard;
 use App\Models\Student;
+use App\Support\GradeCatalog;
 
 it('looks up a student by index number and stores session', function () {
     $student = Student::factory()->create([
         'index_number' => 'STU-2026-0142',
         'name' => 'Amina Rahman',
+    ]);
+
+    ReportCard::factory()->create([
+        'student_id' => $student->id,
+        'school_class_id' => GradeCatalog::resolveClass('Form 3A')->id,
+        'term_id' => GradeCatalog::resolveTerm('1st Term')->id,
     ]);
 
     $this->post(route('student.lookup.submit'), [

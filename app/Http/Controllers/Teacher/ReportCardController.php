@@ -33,9 +33,9 @@ class ReportCardController extends Controller
             $schoolClass = GradeCatalog::resolveClass($request->string('class_name')->toString());
             $term = GradeCatalog::resolveTerm($request->string('term')->toString());
 
-            $student = Student::query()->updateOrCreate(
-                ['index_number' => $request->string('index_number')->toString()],
-                ['name' => $request->string('name')->toString()],
+            $student = $this->resolveStudent(
+                $request->string('index_number')->toString(),
+                $request->string('name')->toString(),
             );
 
             Enrollment::query()->updateOrCreate(
@@ -172,8 +172,16 @@ class ReportCardController extends Controller
         $termId = $reportCard->term_id;
 
         DB::transaction(function () use ($reportCard): void {
+            $student = $reportCard->student;
+
             $reportCard->subjectScores()->delete();
             $reportCard->delete();
+
+            // Remove the student from lookup once no report cards remain.
+            if ($student !== null && ! $student->reportCards()->exists()) {
+                $student->enrollments()->delete();
+                $student->delete();
+            }
         });
 
         $calculator->refreshRanksForClassTerm($schoolClassId, $termId);
@@ -184,6 +192,23 @@ class ReportCardController extends Controller
                 'term_id' => $termId,
             ])
             ->with('success', 'Report card deleted.');
+    }
+
+    private function resolveStudent(string $indexNumber, string $name): Student
+    {
+        $student = Student::withTrashed()->firstOrNew([
+            'index_number' => $indexNumber,
+        ]);
+
+        $student->name = $name;
+
+        if ($student->trashed()) {
+            $student->restore();
+        } else {
+            $student->save();
+        }
+
+        return $student;
     }
 
     /**

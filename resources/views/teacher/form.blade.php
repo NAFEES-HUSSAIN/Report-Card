@@ -90,55 +90,45 @@
         </div>
         @error('subjects')<p class="field-error mb-4" role="alert">{{ $message }}</p>@enderror
 
-        <div class="overflow-x-auto">
-            <table class="w-full min-w-[40rem] border-collapse" id="subjects-table">
-                <thead>
-                    <tr>
-                        <th scope="col" class="table-th">Subject</th>
-                        <th scope="col" class="table-th w-32">Marks</th>
-                        <th scope="col" class="table-th">Remarks</th>
-                        <th scope="col" class="table-th">Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="subjects-tbody">
-                    @foreach ($subjectRows as $index => $row)
-                        <tr class="subject-row" data-index="{{ $index }}">
-                            <td class="table-td">
-                                <label for="subjects_{{ $index }}_subject_id" class="sr-only">Subject</label>
-                                <select name="subjects[{{ $index }}][subject_id]" id="subjects_{{ $index }}_subject_id" class="input-field" required>
-                                    <option value="">Select subject</option>
-                                    @foreach ($availableSubjects ?? [] as $subject)
-                                        <option value="{{ $subject->id }}" @selected((string) old("subjects.$index.subject_id", data_get($row, 'subject_id')) === (string) $subject->id)>
-                                            {{ $subject->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                @error("subjects.$index.subject_id")<p class="field-error" role="alert">{{ $message }}</p>@enderror
-                            </td>
-                            <td class="table-td">
-                                <label for="subjects_{{ $index }}_marks" class="sr-only">Marks</label>
-                                <input type="number" name="subjects[{{ $index }}][marks]" id="subjects_{{ $index }}_marks" value="{{ old("subjects.$index.marks", data_get($row, 'marks')) }}" class="input-field" min="0" max="100" step="0.1" required>
+        <div id="subjects-list" class="space-y-4">
+            @foreach ($subjectRows as $index => $row)
+                <div class="subject-row rounded-2xl border border-[var(--gs-line)] bg-[var(--gs-surface)] p-4" data-index="{{ $index }}">
+                    <div class="grid grid-cols-1 gap-4">
+                        <div>
+                            <label for="subjects_{{ $index }}_subject_id" class="input-label subject-id-label">Subject</label>
+                            <select name="subjects[{{ $index }}][subject_id]" id="subjects_{{ $index }}_subject_id" class="input-field subject-id" required>
+                                <option value="">Select subject</option>
+                                @foreach ($availableSubjects ?? [] as $subject)
+                                    <option value="{{ $subject->id }}" @selected((string) old("subjects.$index.subject_id", data_get($row, 'subject_id')) === (string) $subject->id)>
+                                        {{ $subject->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error("subjects.$index.subject_id")<p class="field-error" role="alert">{{ $message }}</p>@enderror
+                        </div>
+                        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                            <div>
+                                <label for="subjects_{{ $index }}_marks" class="input-label subject-marks-label">Marks</label>
+                                <input type="number" name="subjects[{{ $index }}][marks]" id="subjects_{{ $index }}_marks" value="{{ old("subjects.$index.marks", data_get($row, 'marks')) }}" class="input-field subject-marks" min="0" max="100" step="0.1" required>
                                 @error("subjects.$index.marks")<p class="field-error" role="alert">{{ $message }}</p>@enderror
-                            </td>
-                            <td class="table-td">
-                                <label for="subjects_{{ $index }}_remarks" class="sr-only">Remarks</label>
-                                <input type="text" name="subjects[{{ $index }}][remarks]" id="subjects_{{ $index }}_remarks" value="{{ old("subjects.$index.remarks", data_get($row, 'remarks')) }}" class="input-field">
+                            </div>
+                            <div>
+                                <label for="subjects_{{ $index }}_remarks" class="input-label subject-remarks-label">Subject remark</label>
+                                <input type="text" name="subjects[{{ $index }}][remarks]" id="subjects_{{ $index }}_remarks" value="{{ old("subjects.$index.remarks", data_get($row, 'remarks')) }}" class="input-field subject-remarks" placeholder="Optional">
                                 @error("subjects.$index.remarks")<p class="field-error" role="alert">{{ $message }}</p>@enderror
-                            </td>
-                            <td class="table-td">
-                                <div class="table-actions">
-                                    <button type="button" class="table-action-delete remove-subject-row" aria-label="Remove subject row">
-                                        <svg class="h-4 w-4 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
-                                        </svg>
-                                        <span>Remove</span>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                            </div>
+                        </div>
+                        <div class="flex justify-end">
+                            <button type="button" class="table-action-delete remove-subject-row" aria-label="Remove subject row">
+                                <svg class="h-4 w-4 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                                </svg>
+                                <span>Remove</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
         </div>
     </section>
 
@@ -196,23 +186,25 @@
 @endphp
 
 <template id="subject-row-template">
-    <tr class="subject-row">
-        <td class="table-td">
-            <label class="sr-only subject-id-label">Subject</label>
-            <select class="input-field subject-id" required>
-                <option value="">Select subject</option>
-            </select>
-        </td>
-        <td class="table-td">
-            <label class="sr-only subject-marks-label">Marks</label>
-            <input type="number" class="input-field subject-marks" min="0" max="100" step="0.1" required>
-        </td>
-        <td class="table-td">
-            <label class="sr-only subject-remarks-label">Remarks</label>
-            <input type="text" class="input-field subject-remarks">
-        </td>
-        <td class="table-td">
-            <div class="table-actions">
+    <div class="subject-row rounded-2xl border border-[var(--gs-line)] bg-[var(--gs-surface)] p-4">
+        <div class="grid grid-cols-1 gap-4">
+            <div>
+                <label class="input-label subject-id-label">Subject</label>
+                <select class="input-field subject-id" required>
+                    <option value="">Select subject</option>
+                </select>
+            </div>
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div>
+                    <label class="input-label subject-marks-label">Marks</label>
+                    <input type="number" class="input-field subject-marks" min="0" max="100" step="0.1" required>
+                </div>
+                <div>
+                    <label class="input-label subject-remarks-label">Subject remark</label>
+                    <input type="text" class="input-field subject-remarks" placeholder="Optional">
+                </div>
+            </div>
+            <div class="flex justify-end">
                 <button type="button" class="table-action-delete remove-subject-row" aria-label="Remove subject row">
                     <svg class="h-4 w-4 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
@@ -220,21 +212,21 @@
                     <span>Remove</span>
                 </button>
             </div>
-        </td>
-    </tr>
+        </div>
+    </div>
 </template>
 
 <script>
     (() => {
-        const tbody = document.getElementById('subjects-tbody');
+        const list = document.getElementById('subjects-list');
         const template = document.getElementById('subject-row-template');
         const addBtn = document.getElementById('add-subject-row');
         const subjectOptions = @json($subjectOptions);
-        if (!tbody || !template || !addBtn) return;
+        if (!list || !template || !addBtn) return;
 
         const nextIndex = () => {
             let max = -1;
-            tbody.querySelectorAll('.subject-row').forEach((row) => {
+            list.querySelectorAll('.subject-row').forEach((row) => {
                 const idx = Number(row.dataset.index ?? -1);
                 if (idx > max) max = idx;
             });
@@ -276,12 +268,12 @@
         addBtn.addEventListener('click', () => {
             const fragment = template.content.cloneNode(true);
             wireRow(fragment.querySelector('.subject-row'), nextIndex());
-            tbody.appendChild(fragment);
+            list.appendChild(fragment);
         });
 
-        tbody.addEventListener('click', (event) => {
+        list.addEventListener('click', (event) => {
             const btn = event.target.closest('.remove-subject-row');
-            if (!btn || tbody.querySelectorAll('.subject-row').length <= 1) return;
+            if (!btn || list.querySelectorAll('.subject-row').length <= 1) return;
             btn.closest('.subject-row')?.remove();
         });
     })();

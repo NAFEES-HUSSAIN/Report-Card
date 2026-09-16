@@ -22,7 +22,13 @@ class LookupRequest extends FormRequest
                 'required',
                 'string',
                 'max:50',
-                Rule::exists('students', 'index_number')->whereNull('deleted_at'),
+                Rule::exists('students', 'index_number')
+                    ->whereNull('deleted_at')
+                    ->where(function ($query): void {
+                        $query->whereIn('id', function ($subquery): void {
+                            $subquery->select('student_id')->from('report_cards');
+                        });
+                    }),
             ],
         ];
     }

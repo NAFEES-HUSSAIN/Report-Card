@@ -223,6 +223,7 @@ THEN (perfect POS)
 > **Git with GitHub Desktop:** see [`docs/GITHUB-DESKTOP-HABIT.md`](GITHUB-DESKTOP-HABIT.md)  
 > **Bug → Pest habit:** see [`docs/BUG-TO-PEST-HABIT.md`](BUG-TO-PEST-HABIT.md)  
 > **Named backups:** see [`docs/NAMED-BACKUPS-HABIT.md`](NAMED-BACKUPS-HABIT.md)  
+> **Hostinger domain vs hosting:** see [`docs/HOSTINGER-DOMAIN-VS-HOSTING.md`](HOSTINGER-DOMAIN-VS-HOSTING.md)  
 > **Edit/Delete map:** see [`docs/EDIT-DELETE-QA.md`](EDIT-DELETE-QA.md)
 
 ### Playbook: UI-only change (Blade / PHP, no DB)
@@ -268,6 +269,15 @@ THEN (perfect POS)
 ---
 
 ## Session log (newest first)
+
+### 2026-09-17 — Domain “rename” clarified
+- **Updated:** `docs/HOSTINGER-DOMAIN-VS-HOSTING.md`  
+- **Lesson:** domain names cannot be renamed like files; reuse old domain as-is or buy a matching new domain for the other system  
+
+### 2026-09-17 — Deploy done + Hostinger domain/hosting explained
+- **Deployed:** edit/delete confirms + mobile action CSS (`public/build` + views)  
+- **Created:** `docs/HOSTINGER-DOMAIN-VS-HOSTING.md`  
+- **Lesson:** hosting expiry ≠ domain expiry; renew hosting to keep site online  
 
 ### 2026-09-16 — Named backups habit completed
 - **You did:** renamed backup with date + reason style  

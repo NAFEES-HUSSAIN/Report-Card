@@ -2,9 +2,10 @@
 
 > **Purpose:** Living notebook for your journey from *good student* → *growing mid-level* → *senior habits*.  
 > **Rule:** After every learning activity or real production lesson, this file is updated **immediately** before the next task.  
-> **Current training project:** GradeSphere (Laravel school report-card system)  
+> **Current training project:** ShopPOS (Laravel POS) in `D:\SEPTEMBER\POS`  
+> **First system (keep live):** GradeSphere (school report-card) — GitHub `Report-Card`, live `myschoolreports.site`  
 > **Long-term aim:** Build production-ready business systems (especially a **perfect POS** — Point of Sale — plus similar apps: inventory, billing, shop/restaurant)  
-> **Last updated:** 2026-09-16
+> **Last updated:** 2026-09-17
 
 ---
 
@@ -32,7 +33,7 @@ GradeSphere is your **training ground**. A real POS needs the same habits you ar
 7. **Multi-branch / multi-tenant** (advanced) — several shops, one codebase  
 8. **Hardware later** — receipt printer, barcode scanner (after software is solid)
 
-**Teacher rule:** Do **not** jump to a full POS tomorrow. Finish Priority 1–3 habits on GradeSphere first. POS without backup/test/git habits becomes a dangerous money app.
+**Teacher rule:** Priority 1 shipping habits are done on GradeSphere. ShopPOS is the second product — same loop, stricter money/stock rules. Do **not** mix POS files into the GradeSphere live site or the `Report-Card` GitHub repo.
 
 ---
 
@@ -223,6 +224,7 @@ THEN (perfect POS)
 > **Git with GitHub Desktop:** see [`docs/GITHUB-DESKTOP-HABIT.md`](GITHUB-DESKTOP-HABIT.md)  
 > **Bug → Pest habit:** see [`docs/BUG-TO-PEST-HABIT.md`](BUG-TO-PEST-HABIT.md)  
 > **Named backups:** see [`docs/NAMED-BACKUPS-HABIT.md`](NAMED-BACKUPS-HABIT.md)  
+> **Hostinger domain vs hosting:** see [`docs/HOSTINGER-DOMAIN-VS-HOSTING.md`](HOSTINGER-DOMAIN-VS-HOSTING.md)  
 > **Edit/Delete map:** see [`docs/EDIT-DELETE-QA.md`](EDIT-DELETE-QA.md)
 
 ### Playbook: UI-only change (Blade / PHP, no DB)
@@ -268,6 +270,30 @@ THEN (perfect POS)
 ---
 
 ## Session log (newest first)
+
+### 2026-09-17 — Phase 0 safe split (docs kept)
+- **You asked:** keep the learning docs (how we work, your level, GradeSphere lessons)
+- **Kept:** all 13 files in `docs/` AND copied to `D:\SEPTEMBER\_learning-docs`
+- **GradeSphere saved:** `D:\SEPTEMBER\Report-Card` (school code + GitHub remote `Report-Card`)
+- **ShopPOS folder:** `D:\SEPTEMBER\POS` — Laravel welcome app only; school controllers/views/tests removed
+- **Safety:** POS GitHub remote was removed so we cannot overwrite GradeSphere by mistake
+- **Lesson:** second project = new folder. First project stays. The notebook in `docs/` is not app code — we never delete it
+- **Next:** Phase 1 skeleton (login + roles + empty dashboard) after you confirm local welcome page
+
+### 2026-09-17 — Mentor resumed on ShopPOS (docs restored)
+- **You asked:** new Cursor teacher to read `_learning-docs` and continue as the same coach
+- **Done:** confirmed all 13 learning files live in `docs/` (same as `D:\SEPTEMBER\_learning-docs`, except `POS-BUILD-PLAN.md` which is the newer ShopPOS version)
+- **Honest state:** this folder is still the GradeSphere git repo (`origin` = `Report-Card`). Some files were started as ShopPOS (README, composer name, welcome route), but GradeSphere app code is still here. **Do not push this mix to GradeSphere GitHub.**
+- **Next:** finish Phase 0 the safe way — ShopPOS as its own project/repo, GradeSphere source kept safe
+
+### 2026-09-17 — Domain “rename” clarified
+- **Updated:** `docs/HOSTINGER-DOMAIN-VS-HOSTING.md`  
+- **Lesson:** domain names cannot be renamed like files; reuse old domain as-is or buy a matching new domain for the other system  
+
+### 2026-09-17 — Deploy done + Hostinger domain/hosting explained
+- **Deployed:** edit/delete confirms + mobile action CSS (`public/build` + views)  
+- **Created:** `docs/HOSTINGER-DOMAIN-VS-HOSTING.md`  
+- **Lesson:** hosting expiry ≠ domain expiry; renew hosting to keep site online  
 
 ### 2026-09-16 — Named backups habit completed
 - **You did:** renamed backup with date + reason style  
@@ -355,10 +381,10 @@ After **every** learning task:
 
 | Field | Value |
 |---|---|
-| **Task name** | Priority 2 — choose next lesson |
-| **Goal** | Grow independence after shipping habits |
-| **Success looks like** | One Priority 2 item started |
-| **Options** | 5) Solo feature drill · 6) Laravel log first · 7) Draw the data model |
+| **Task name** | Phase 1 — ShopPOS skeleton |
+| **Goal** | Login + Owner / Cashier / Manager roles + empty dashboard |
+| **Success looks like** | You can log in locally and see an empty POS home (no selling yet) |
+| **You reply** | `PHASE 1 — start skeleton` |
 | **Update this file after?** | Yes |
 
 ---
